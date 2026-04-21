@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pmi-ambulance-webapi
+  name: pmdl-pharmacy-webapi
 spec:
   template:
     spec:
@@ -33,7 +33,7 @@ spec:
                   name: mongodb-auth
                   key: password
       containers:
-        - name: pmi-ambulance-wl-webapi-container
+        - name: pmdl-pharmacy-webapi-container
           env:
             - name: AMBULANCE_API_MONGODB_HOST
               value: null
