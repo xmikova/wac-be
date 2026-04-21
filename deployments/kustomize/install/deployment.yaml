@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pmi-ambulance-webapi
+  name: pmdl-pharmacy-webapi
 spec:
   replicas: 1
   selector:
     matchLabels:
-      pod: pmi-ambulance-webapi-label
+      pod: pmdl-pharmacy-webapi-label
   template:
     metadata:
       labels:
-        pod: pmi-ambulance-webapi-label
+        pod: pmdl-pharmacy-webapi-label
     spec:
       volumes:
       - name: init-scripts
         configMap:
-          name: pmi-ambulance-webapi-mongodb-init
+          name: pmdl-pharmacy-webapi-mongodb-init
       initContainers:
       - name: init-mongodb
         image: mongo:latest
@@ -38,12 +38,12 @@ spec:
           - name: AMBULANCE_API_MONGODB_DATABASE
             valueFrom:
               configMapKeyRef:
-                name: pmi-ambulance-webapi-config
+                name: pmdl-pharmacy-webapi-config
                 key: database
           - name: AMBULANCE_API_MONGODB_COLLECTION
             valueFrom:
               configMapKeyRef:
-                name: pmi-ambulance-webapi-config
+                name: pmdl-pharmacy-webapi-config
                 key: collection
           - name: RETRY_CONNECTION_SECONDS
             value: "5"
@@ -55,8 +55,8 @@ spec:
             memory: "256Mi"
             cpu: "0.1"
       containers:
-      - name: pmi-ambulance-wl-webapi-container
-        image: xmikova/ambulance-wl-webapi:latest
+      - name: pmdl-pharmacy-webapi-container
+        image: xmikova/wac-be:latest
         imagePullPolicy: Always
         ports:
         - name: webapi-port
@@ -79,12 +79,12 @@ spec:
           - name: AMBULANCE_API_MONGODB_DATABASE
             valueFrom:
               configMapKeyRef:
-                name: pmi-ambulance-webapi-config
+                name: pmdl-pharmacy-webapi-config
                 key: database
           - name: AMBULANCE_API_MONGODB_COLLECTION
             valueFrom:
               configMapKeyRef:
-                name: pmi-ambulance-webapi-config
+                name: pmdl-pharmacy-webapi-config
                 key: collection
           - name: AMBULANCE_API_MONGODB_TIMEOUT_SECONDS
             value: "5"

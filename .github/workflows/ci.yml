@@ -50,7 +50,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5.7.0
       with:
-        images: xmikova/ambulance-wl-webapi
+        images: xmikova/wac-be
         tags: |
           type=schedule
           type=ref,event=branch

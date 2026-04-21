@@ -1,10 +1,10 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: pmi-ambulance-webapi
+  name: pmdl-pharmacy-webapi
 spec:
   selector:
-    pod: pmi-ambulance-webapi-label
+    pod: pmdl-pharmacy-webapi-label
   ports:
   - name: http
     protocol: TCP
