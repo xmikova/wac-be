@@ -6,12 +6,12 @@ resources:
 - service.yaml
 
 configMapGenerator:
-  - name: pmdl-pharmacy-webapi-mongodb-init
+  - name: pmi-ambulance-webapi-mongodb-init
     files:
       - params/init-db.js
-  - name: pmdl-pharmacy-webapi-config
+  - name: pmi-ambulance-webapi-config
     literals:
-      - database=pmdl-pharmacy
+      - database=pmi-ambulance
       - collection=ambulance
 patches:
 - path: patches/webapi.deployment.yaml
@@ -19,4 +19,4 @@ patches:
     group: apps
     version: v1
     kind: Deployment
-    name: pmdl-pharmacy-webapi
+    name: pmi-ambulance-webapi
