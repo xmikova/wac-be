@@ -22,42 +22,62 @@ while(true) {
     }
 }
 
-// if database and collection exists, exit with success - already initialized
-const databases = connection.getDBNames()
-if (databases.includes(database)) {
-    const dbInstance = connection.getDB(database)
-    collections = dbInstance.getCollectionNames()
-    if (collections.includes(collection)) {
-      print(`Collection '${collection}' already exists in database '${database}'`)
-        process.exit(0);
-    }
-}
-
-// initialize
-// create database and collection
 const db = connection.getDB(database)
-db.createCollection(collection)
 
-// create indexes
-db[collection].createIndex({ "id": 1 })
-
-//insert sample data
-let result = db[collection].insertMany([
-    {
-        "id": "bobulova",
-        "name": "Dr.Bobulová",
-        "roomNumber": "123",
-        "predefinedConditions": [
-            { "value": "Nádcha", "code": "rhinitis" },
-            { "value": "Kontrola", "code": "checkup" }
-        ]
-    }
-]);
-
-if (result.writeError) {
-    console.error(result)
-    print(`Error when writing the data: ${result.errmsg}`)
+// initialize ambulance collection if not exists
+const databases = connection.getDBNames()
+if (!databases.includes(database) || !db.getCollectionNames().includes(collection)) {
+    db.createCollection(collection)
+    db[collection].createIndex({ "id": 1 })
+    db[collection].insertMany([
+        {
+            "id": "bobulova",
+            "name": "Dr.Bobulová",
+            "roomNumber": "123",
+            "predefinedConditions": [
+                { "value": "Nádcha", "code": "rhinitis" },
+                { "value": "Kontrola", "code": "checkup" }
+            ]
+        }
+    ]);
+    print(`Initialized collection '${collection}' in database '${database}'`)
+} else {
+    print(`Collection '${collection}' already exists in database '${database}'`)
 }
 
-// exit with success
+// initialize pharmacy collection if not exists
+const pharmacyCollection = 'pharmacy'
+if (!db.getCollectionNames().includes(pharmacyCollection)) {
+    db.createCollection(pharmacyCollection)
+    db[pharmacyCollection].createIndex({ "id": 1 })
+    db[pharmacyCollection].insertOne({
+        "id": "pmdl-pharmacy",
+        "medicines": [
+            {
+                "id": "med-001",
+                "name": "Paracetamol 500mg",
+                "activeSubstance": "Paracetamolum",
+                "dosage": "500mg",
+                "batchNumber": "BT2024001",
+                "expiryDate": "2026-12-31",
+                "minStock": 100,
+                "currentStock": 250
+            },
+            {
+                "id": "med-002",
+                "name": "Ibuprofen 400mg",
+                "activeSubstance": "Ibuprofenum",
+                "dosage": "400mg",
+                "batchNumber": "BT2024002",
+                "expiryDate": "2025-06-30",
+                "minStock": 50,
+                "currentStock": 30
+            }
+        ]
+    });
+    print(`Initialized collection '${pharmacyCollection}' in database '${database}'`)
+} else {
+    print(`Collection '${pharmacyCollection}' already exists in database '${database}'`)
+}
+
 process.exit(0);
