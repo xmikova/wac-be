@@ -10,9 +10,9 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/xmikova/ambulance-webapi/api"
-	"github.com/xmikova/ambulance-webapi/internal/pharmacy_orders"
 	"github.com/xmikova/ambulance-webapi/internal/db_service"
 	"github.com/xmikova/ambulance-webapi/internal/pharmacy"
+	"github.com/xmikova/ambulance-webapi/internal/pharmacy_orders"
 )
 
 func main() {
@@ -46,18 +46,11 @@ func main() {
 		ctx.Next()
 	})
 
-	// orders routes
 	handleFunctions := &pharmacy_orders.ApiHandleFunctions{
-		PharmacyOrdersAPI: pharmacy_orders.NewPharmacyOrdersApi(),
+		PharmacyOrdersAPI:    pharmacy_orders.NewPharmacyOrdersApi(),
+		PharmacyMedicinesAPI: pharmacy_orders.NewPharmacyMedicinesApi(),
 	}
 	pharmacy_orders.NewRouterWithGinEngine(engine, *handleFunctions)
-
-	// medicines routes
-	engine.GET("/api/pharmacy/:pharmacyId/medicines", pharmacy.GetMedicines)
-	engine.POST("/api/pharmacy/:pharmacyId/medicines", pharmacy.CreateMedicine)
-	engine.GET("/api/pharmacy/:pharmacyId/medicines/:medicineId", pharmacy.GetMedicine)
-	engine.PUT("/api/pharmacy/:pharmacyId/medicines/:medicineId", pharmacy.UpdateMedicine)
-	engine.DELETE("/api/pharmacy/:pharmacyId/medicines/:medicineId", pharmacy.DeleteMedicine)
 
 	engine.GET("/openapi", api.HandleOpenApi)
 	engine.Run(":" + port)

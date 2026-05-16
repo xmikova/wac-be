@@ -43,11 +43,42 @@ func DefaultHandleFunc(c *gin.Context) {
 }
 
 type ApiHandleFunctions struct {
-	PharmacyOrdersAPI PharmacyOrdersAPI
+	PharmacyOrdersAPI    PharmacyOrdersAPI
+	PharmacyMedicinesAPI PharmacyMedicinesAPI
 }
 
 func getRoutes(handleFunctions ApiHandleFunctions) []Route {
 	return []Route{
+		{
+			"GetMedicines",
+			http.MethodGet,
+			"/api/pharmacy/:pharmacyId/medicines",
+			handleFunctions.PharmacyMedicinesAPI.GetMedicines,
+		},
+		{
+			"CreateMedicine",
+			http.MethodPost,
+			"/api/pharmacy/:pharmacyId/medicines",
+			handleFunctions.PharmacyMedicinesAPI.CreateMedicine,
+		},
+		{
+			"GetMedicine",
+			http.MethodGet,
+			"/api/pharmacy/:pharmacyId/medicines/:medicineId",
+			handleFunctions.PharmacyMedicinesAPI.GetMedicine,
+		},
+		{
+			"UpdateMedicine",
+			http.MethodPut,
+			"/api/pharmacy/:pharmacyId/medicines/:medicineId",
+			handleFunctions.PharmacyMedicinesAPI.UpdateMedicine,
+		},
+		{
+			"DeleteMedicine",
+			http.MethodDelete,
+			"/api/pharmacy/:pharmacyId/medicines/:medicineId",
+			handleFunctions.PharmacyMedicinesAPI.DeleteMedicine,
+		},
 		{
 			"CreateOrder",
 			http.MethodPost,
