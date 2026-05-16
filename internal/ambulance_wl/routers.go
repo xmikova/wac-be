@@ -69,6 +69,8 @@ type ApiHandleFunctions struct {
 	AmbulanceWaitingListAPI AmbulanceWaitingListAPI
 	// Routes for the AmbulancesAPI part of the API
 	AmbulancesAPI AmbulancesAPI
+	// Routes for the PharmacyOrdersAPI part of the API
+	PharmacyOrdersAPI PharmacyOrdersAPI
 }
 
 func getRoutes(handleFunctions ApiHandleFunctions) []Route {
@@ -120,6 +122,42 @@ func getRoutes(handleFunctions ApiHandleFunctions) []Route {
 			http.MethodDelete,
 			"/api/ambulance/:ambulanceId",
 			handleFunctions.AmbulancesAPI.DeleteAmbulance,
+		},
+		{
+			"CreateOrder",
+			http.MethodPost,
+			"/api/pharmacy/:pharmacyId/orders",
+			handleFunctions.PharmacyOrdersAPI.CreateOrder,
+		},
+		{
+			"DeleteOrder",
+			http.MethodDelete,
+			"/api/pharmacy/:pharmacyId/orders/:orderId",
+			handleFunctions.PharmacyOrdersAPI.DeleteOrder,
+		},
+		{
+			"GetOrder",
+			http.MethodGet,
+			"/api/pharmacy/:pharmacyId/orders/:orderId",
+			handleFunctions.PharmacyOrdersAPI.GetOrder,
+		},
+		{
+			"GetOrders",
+			http.MethodGet,
+			"/api/pharmacy/:pharmacyId/orders",
+			handleFunctions.PharmacyOrdersAPI.GetOrders,
+		},
+		{
+			"UpdateOrder",
+			http.MethodPut,
+			"/api/pharmacy/:pharmacyId/orders/:orderId",
+			handleFunctions.PharmacyOrdersAPI.UpdateOrder,
+		},
+		{
+			"UpdateOrderStatus",
+			http.MethodPatch,
+			"/api/pharmacy/:pharmacyId/orders/:orderId/status",
+			handleFunctions.PharmacyOrdersAPI.UpdateOrderStatus,
 		},
 	}
 }

@@ -56,6 +56,7 @@ func main() {
 		AmbulanceConditionsAPI:  ambulance_wl.NewAmbulanceConditionsApi(),
 		AmbulanceWaitingListAPI: ambulance_wl.NewAmbulanceWaitingListApi(),
 		AmbulancesAPI:           ambulance_wl.NewAmbulancesApi(),
+		PharmacyOrdersAPI:       ambulance_wl.NewPharmacyOrdersApi(),
 	}
 	ambulance_wl.NewRouterWithGinEngine(engine, *handleFunctions)
 
@@ -65,13 +66,6 @@ func main() {
 	engine.GET("/api/pharmacy/:pharmacyId/medicines/:medicineId", pharmacy.GetMedicine)
 	engine.PUT("/api/pharmacy/:pharmacyId/medicines/:medicineId", pharmacy.UpdateMedicine)
 	engine.DELETE("/api/pharmacy/:pharmacyId/medicines/:medicineId", pharmacy.DeleteMedicine)
-
-	engine.GET("/api/pharmacy/:pharmacyId/orders", pharmacy.GetOrders)
-	engine.POST("/api/pharmacy/:pharmacyId/orders", pharmacy.CreateOrder)
-	engine.GET("/api/pharmacy/:pharmacyId/orders/:orderId", pharmacy.GetOrder)
-	engine.PUT("/api/pharmacy/:pharmacyId/orders/:orderId", pharmacy.UpdateOrder)
-	engine.PATCH("/api/pharmacy/:pharmacyId/orders/:orderId/status", pharmacy.UpdateOrderStatus)
-	engine.DELETE("/api/pharmacy/:pharmacyId/orders/:orderId", pharmacy.DeleteOrder)
 
 	engine.GET("/openapi", api.HandleOpenApi)
 	engine.Run(":" + port)
