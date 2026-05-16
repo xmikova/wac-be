@@ -1,8 +1,8 @@
 generatorName: go-gin-server
 outputDir: /local
-inputSpec: /local/api/ambulance-wl.openapi.yaml
+inputSpec: /local/api/pharmacy.openapi.yaml
 enablePostProcessFile: true
 additionalProperties:
-  apiPath: internal/ambulance_wl
-  packageName: ambulance_wl
+  apiPath: internal/pharmacy_orders
+  packageName: pharmacy_orders
   interfaceOnly: true

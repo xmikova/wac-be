@@ -8,12 +8,12 @@ if (-not $command)  {
 
 $ProjectRoot = "${PSScriptRoot}/.."
 
-$env:AMBULANCE_API_ENVIRONMENT="Development"
-$env:AMBULANCE_API_PORT="8080"
+$env:PHARMACY_API_ENVIRONMENT="Development"
+$env:PHARMACY_API_PORT="8080"
 ...
-$env:AMBULANCE_API_PORT="8080"
-$env:AMBULANCE_API_MONGODB_USERNAME="root"
-$env:AMBULANCE_API_MONGODB_PASSWORD="neUhaDnes"
+$env:PHARMACY_API_PORT="8080"
+$env:PHARMACY_API_MONGODB_USERNAME="root"
+$env:PHARMACY_API_MONGODB_PASSWORD="neUhaDnes"
 
 function mongo {
     docker compose --file ${ProjectRoot}/deployments/docker-compose/compose.yaml $args
@@ -26,7 +26,7 @@ switch ($command) {
     "start" {
         try {
             mongo up --detach
-            go run ${ProjectRoot}/cmd/ambulance-api-service
+            go run ${ProjectRoot}/cmd/pharmacy-api-service
         } finally {
             mongo down
         }
@@ -35,7 +35,7 @@ switch ($command) {
         go test -v ./...
     }
     "docker" {
-         docker build -t xmikova/ambulance-wl-webapi:local-build -f ${ProjectRoot}/build/docker/Dockerfile .
+         docker build -t xmikova/wac-be:local-build -f ${ProjectRoot}/build/docker/Dockerfile .
     }
     "mongo" {
         mongo up

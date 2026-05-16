@@ -1,0 +1,639 @@
+openapi: 3.0.0
+servers:
+  - description: Cluster Endpoint
+    url: /api
+info:
+  description: Pharmacy Medicine and Orders management for Web-In-Cloud system
+  version: "1.0.0"
+  title: Pharmacy Management Api
+  contact:
+    email: xmikova@stuba.sk
+  license:
+    name: CC BY 4.0
+    url: "https://creativecommons.org/licenses/by/4.0/"
+tags:
+- name: pharmacyOrders
+  description: Pharmacy Orders API
+- name: pharmacyMedicines
+  description: Pharmacy Medicines Inventory API
+paths:
+  "/pharmacy/{pharmacyId}/orders":
+    get:
+      tags:
+        - pharmacyOrders
+      summary: Provides the list of medication orders
+      operationId: getOrders
+      description: By using pharmacyId you get list of all medication orders
+      parameters:
+        - in: path
+          name: pharmacyId
+          description: pass the id of the particular pharmacy
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: list of medication orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+              examples:
+                response:
+                  $ref: "#/components/examples/OrdersListExample"
+        "404":
+          description: Pharmacy with such ID does not exist
+    post:
+      tags:
+        - pharmacyOrders
+      summary: Creates new medication order
+      operationId: createOrder
+      description: Use this method to create new medication order
+      parameters:
+        - in: path
+          name: pharmacyId
+          description: pass the id of the particular pharmacy
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Order"
+            examples:
+              request-sample:
+                $ref: "#/components/examples/OrderExample"
+        description: Order to create
+        required: true
+      responses:
+        "200":
+          description: Order successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+              examples:
+                response:
+                  $ref: "#/components/examples/OrderExample"
+        "400":
+          description: Missing mandatory properties of input object.
+        "404":
+          description: Pharmacy with such ID does not exist
+        "409":
+          description: Order with the specified id already exists
+  "/pharmacy/{pharmacyId}/orders/{orderId}":
+    get:
+      tags:
+        - pharmacyOrders
+      summary: Provides details about specific medication order
+      operationId: getOrder
+      description: By using pharmacyId and orderId you get details of particular order
+      parameters:
+        - in: path
+          name: pharmacyId
+          description: pass the id of the particular pharmacy
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: orderId
+          description: pass the id of the particular order
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: order details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+              examples:
+                response:
+                  $ref: "#/components/examples/OrderExample"
+        "404":
+          description: Pharmacy or Order with such ID does not exist
+    put:
+      tags:
+        - pharmacyOrders
+      summary: Updates specific medication order
+      operationId: updateOrder
+      description: Use this method to update content of the medication order (items, etc.)
+      parameters:
+        - in: path
+          name: pharmacyId
+          description: pass the id of the particular pharmacy
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: orderId
+          description: pass the id of the particular order
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Order"
+            examples:
+              request:
+                $ref: "#/components/examples/OrderExample"
+        description: Order to update
+        required: true
+      responses:
+        "200":
+          description: Order successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+              examples:
+                response:
+                  $ref: "#/components/examples/OrderExample"
+        "404":
+          description: Pharmacy or Order with such ID does not exist
+        "409":
+          description: Order ID mismatch
+    delete:
+      tags:
+        - pharmacyOrders
+      summary: Cancels specific medication order
+      operationId: deleteOrder
+      description: Use this method to delete/cancel the specific medication order
+      parameters:
+        - in: path
+          name: pharmacyId
+          description: pass the id of the particular pharmacy
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: orderId
+          description: pass the id of the particular order
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Order cancelled
+        "404":
+          description: Pharmacy or Order with such ID does not exist
+  "/pharmacy/{pharmacyId}/orders/{orderId}/status":
+    patch:
+      tags:
+        - pharmacyOrders
+      summary: Updates order status
+      operationId: updateOrderStatus
+      description: Use this method to change the order status (created, confirmed, delivered, cancelled)
+      parameters:
+        - in: path
+          name: pharmacyId
+          description: pass the id of the particular pharmacy
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: orderId
+          description: pass the id of the particular order
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  $ref: "#/components/schemas/OrderStatus"
+        description: New order status
+        required: true
+      responses:
+        "200":
+          description: Order status successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+              examples:
+                response:
+                  $ref: "#/components/examples/OrderExample"
+        "400":
+          description: Invalid status value
+        "404":
+          description: Pharmacy or Order with such ID does not exist
+  "/pharmacy/{pharmacyId}/medicines":
+    get:
+      tags:
+        - pharmacyMedicines
+      summary: Provides the list of medicines in inventory
+      operationId: getMedicines
+      description: By using pharmacyId you get list of all medicines currently in the inventory
+      parameters:
+        - in: path
+          name: pharmacyId
+          description: pass the id of the particular pharmacy
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: list of medicines in inventory
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Medicine"
+              examples:
+                response:
+                  $ref: "#/components/examples/MedicinesListExample"
+        "404":
+          description: Pharmacy with such ID does not exist
+    post:
+      tags:
+        - pharmacyMedicines
+      summary: Adds new medicine to inventory
+      operationId: createMedicine
+      description: Use this method to register a new medicine in the pharmacy inventory
+      parameters:
+        - in: path
+          name: pharmacyId
+          description: pass the id of the particular pharmacy
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Medicine"
+            examples:
+              request-sample:
+                $ref: "#/components/examples/MedicineExample"
+        description: Medicine to add to inventory
+        required: true
+      responses:
+        "200":
+          description: Medicine successfully added to inventory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Medicine"
+              examples:
+                response:
+                  $ref: "#/components/examples/MedicineExample"
+        "400":
+          description: Missing mandatory properties of input object.
+        "404":
+          description: Pharmacy with such ID does not exist
+        "409":
+          description: Medicine with the specified id already exists
+  "/pharmacy/{pharmacyId}/medicines/{medicineId}":
+    get:
+      tags:
+        - pharmacyMedicines
+      summary: Provides details about specific medicine
+      operationId: getMedicine
+      description: By using pharmacyId and medicineId you get details of a particular medicine
+      parameters:
+        - in: path
+          name: pharmacyId
+          description: pass the id of the particular pharmacy
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: medicineId
+          description: pass the id of the particular medicine
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: medicine details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Medicine"
+              examples:
+                response:
+                  $ref: "#/components/examples/MedicineExample"
+        "404":
+          description: Pharmacy or Medicine with such ID does not exist
+    put:
+      tags:
+        - pharmacyMedicines
+      summary: Updates specific medicine
+      operationId: updateMedicine
+      description: Use this method to update details of a medicine (dosage, batch number, expiry date, stock levels, etc.)
+      parameters:
+        - in: path
+          name: pharmacyId
+          description: pass the id of the particular pharmacy
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: medicineId
+          description: pass the id of the particular medicine
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Medicine"
+            examples:
+              request:
+                $ref: "#/components/examples/MedicineExample"
+        description: Updated medicine data
+        required: true
+      responses:
+        "200":
+          description: Medicine successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Medicine"
+              examples:
+                response:
+                  $ref: "#/components/examples/MedicineExample"
+        "400":
+          description: Missing mandatory properties of input object.
+        "404":
+          description: Pharmacy or Medicine with such ID does not exist
+        "409":
+          description: Medicine ID mismatch
+    delete:
+      tags:
+        - pharmacyMedicines
+      summary: Removes medicine from inventory
+      operationId: deleteMedicine
+      description: Use this method to remove a medicine from the inventory (e.g. expired or recalled)
+      parameters:
+        - in: path
+          name: pharmacyId
+          description: pass the id of the particular pharmacy
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: medicineId
+          description: pass the id of the particular medicine
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Medicine removed from inventory
+        "404":
+          description: Pharmacy or Medicine with such ID does not exist
+components:
+  schemas:
+    Medicine:
+      type: object
+      required: [id, name, activeSubstance, dosage, batchNumber, expiryDate, minStock, currentStock]
+      properties:
+        id:
+          type: string
+          example: "med-001"
+          description: Unique identifier of the medicine
+        name:
+          type: string
+          example: "Aspirin 500mg"
+          description: Commercial name and dosage of the medicine
+        activeSubstance:
+          type: string
+          example: "Kyselina acetylsalicylová"
+          description: Active pharmaceutical ingredient
+        dosage:
+          type: string
+          example: "500mg"
+          description: Dosage specification
+        batchNumber:
+          type: string
+          example: "BN-2024-0512"
+          description: Manufacturing batch number for traceability
+        expiryDate:
+          type: string
+          example: "2026-12-31"
+          description: Expiration date of the current batch (YYYY-MM-DD)
+        minStock:
+          type: integer
+          format: int32
+          example: 50
+          description: Minimum required stock level; triggers low-stock warning when currentStock falls below this value
+        currentStock:
+          type: integer
+          format: int32
+          example: 200
+          description: Current quantity available in the pharmacy
+      example:
+        $ref: "#/components/examples/MedicineExample"
+    OrderStatus:
+      type: string
+      enum:
+        - created
+        - confirmed
+        - delivered
+        - cancelled
+      description: Status of the medication order
+      example: created
+    OrderItem:
+      type: object
+      required: [medicineId, quantity, unitPrice]
+      properties:
+        medicineId:
+          type: string
+          example: "med-123"
+          description: Unique identifier of the medicine
+        medicineName:
+          type: string
+          example: "Aspirin 500mg"
+          description: Name of the medicine (for reference)
+        quantity:
+          type: integer
+          format: int32
+          example: 100
+          description: Quantity to order
+        unit:
+          type: string
+          example: "tablets"
+          description: Unit of measurement (tablets, bottles, boxes, etc.)
+        unitPrice:
+          type: number
+          format: double
+          example: 0.50
+          description: Price per unit
+        totalPrice:
+          type: number
+          format: double
+          example: 50.00
+          description: Total price for this item (quantity * unitPrice)
+      example:
+        $ref: "#/components/examples/OrderItemExample"
+    Order:
+      type: object
+      required: [id, pharmacyId, items, status, createdAt]
+      properties:
+        id:
+          type: string
+          example: "order-2024-001"
+          description: Unique identifier of the order
+        pharmacyId:
+          type: string
+          example: "pharmacy-main"
+          description: Identifier of the pharmacy placing the order
+        supplierId:
+          type: string
+          example: "supplier-pharma-dist"
+          description: Identifier of the supplier (optional)
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+          description: List of ordered medicines
+        status:
+          $ref: "#/components/schemas/OrderStatus"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-05-01T10:15:00Z"
+          description: Timestamp when order was created
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2024-05-01T14:30:00Z"
+          description: Timestamp when order was last updated
+        createdBy:
+          type: string
+          example: "user-123"
+          description: User ID who created the order
+        notes:
+          type: string
+          example: "Urgent delivery needed"
+          description: Additional notes for the order
+      example:
+        $ref: "#/components/examples/OrderExample"
+  examples:
+    MedicineExample:
+      summary: Sample medicine record
+      description: Example of a medicine registered in the pharmacy inventory
+      value:
+        id: "med-001"
+        name: "Aspirin 500mg"
+        activeSubstance: "Kyselina acetylsalicylová"
+        dosage: "500mg"
+        batchNumber: "BN-2024-0512"
+        expiryDate: "2026-12-31"
+        minStock: 50
+        currentStock: 200
+    MedicinesListExample:
+      summary: List of medicines in inventory
+      description: Example list of medicines registered in the pharmacy
+      value:
+        - id: "med-001"
+          name: "Aspirin 500mg"
+          activeSubstance: "Kyselina acetylsalicylová"
+          dosage: "500mg"
+          batchNumber: "BN-2024-0512"
+          expiryDate: "2026-12-31"
+          minStock: 50
+          currentStock: 200
+        - id: "med-002"
+          name: "Amoxicillin 250mg"
+          activeSubstance: "Amoxicilín"
+          dosage: "250mg"
+          batchNumber: "BN-2024-0301"
+          expiryDate: "2025-06-30"
+          minStock: 30
+          currentStock: 12
+        - id: "med-003"
+          name: "Paracetamol 650mg"
+          activeSubstance: "Paracetamol"
+          dosage: "650mg"
+          batchNumber: "BN-2024-0489"
+          expiryDate: "2027-03-15"
+          minStock: 100
+          currentStock: 340
+    OrderItemExample:
+      summary: Order item - single medicine
+      description: Example of one item in medication order
+      value:
+        medicineId: "med-001"
+        medicineName: "Aspirin 500mg"
+        quantity: 100
+        unit: "tablets"
+        unitPrice: 0.50
+        totalPrice: 50.00
+    OrderExample:
+      summary: Sample medication order
+      description: Example of medication order with items
+      value:
+        id: "order-2024-001"
+        pharmacyId: "pharmacy-main"
+        supplierId: "supplier-pharma-dist"
+        items:
+          - medicineId: "med-001"
+            medicineName: "Aspirin 500mg"
+            quantity: 100
+            unit: "tablets"
+            unitPrice: 0.50
+            totalPrice: 50.00
+          - medicineId: "med-002"
+            medicineName: "Amoxicillin 250mg"
+            quantity: 50
+            unit: "bottles"
+            unitPrice: 2.00
+            totalPrice: 100.00
+        status: "created"
+        createdAt: "2024-05-01T10:15:00Z"
+        updatedAt: "2024-05-01T10:15:00Z"
+        createdBy: "user-123"
+        notes: "Standard delivery"
+    OrdersListExample:
+      summary: List of medication orders
+      description: Example list of multiple medication orders
+      value:
+        - id: "order-2024-001"
+          pharmacyId: "pharmacy-main"
+          supplierId: "supplier-pharma-dist"
+          items:
+            - medicineId: "med-001"
+              medicineName: "Aspirin 500mg"
+              quantity: 100
+              unit: "tablets"
+              unitPrice: 0.50
+              totalPrice: 50.00
+          status: "created"
+          createdAt: "2024-05-01T10:15:00Z"
+          updatedAt: "2024-05-01T10:15:00Z"
+          createdBy: "user-123"
+        - id: "order-2024-002"
+          pharmacyId: "pharmacy-main"
+          supplierId: "supplier-pharma-dist"
+          items:
+            - medicineId: "med-002"
+              medicineName: "Amoxicillin 250mg"
+              quantity: 200
+              unit: "bottles"
+              unitPrice: 2.00
+              totalPrice: 400.00
+            - medicineId: "med-003"
+              medicineName: "Paracetamol 650mg"
+              quantity: 150
+              unit: "tablets"
+              unitPrice: 0.30
+              totalPrice: 45.00
+          status: "confirmed"
+          createdAt: "2024-04-30T14:20:00Z"
+          updatedAt: "2024-05-01T09:00:00Z"
+          createdBy: "user-456"

@@ -12,7 +12,7 @@ configMapGenerator:
   - name: pmdl-pharmacy-webapi-config
     literals:
       - database=pmdl-pharmacy
-      - collection=ambulance
+      - collection=pharmacy
 patches:
 - path: patches/webapi.deployment.yaml
   target:

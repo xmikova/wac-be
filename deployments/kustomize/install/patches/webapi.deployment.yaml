@@ -8,25 +8,25 @@ spec:
       initContainers:
         - name: init-mongodb
           env:
-            - name: AMBULANCE_API_MONGODB_HOST
+            - name: PHARMACY_API_MONGODB_HOST
               value: null
               valueFrom:
                 configMapKeyRef:
                   name: mongodb-connection
                   key: host
-            - name: AMBULANCE_API_MONGODB_PORT
+            - name: PHARMACY_API_MONGODB_PORT
               value: null
               valueFrom:
                 configMapKeyRef:
                   name: mongodb-connection
                   key: port
-            - name: AMBULANCE_API_MONGODB_USERNAME
+            - name: PHARMACY_API_MONGODB_USERNAME
               value: null
               valueFrom:
                 secretKeyRef:
                   name: mongodb-auth
                   key: username
-            - name: AMBULANCE_API_MONGODB_PASSWORD
+            - name: PHARMACY_API_MONGODB_PASSWORD
               value: null
               valueFrom:
                 secretKeyRef:
@@ -35,25 +35,25 @@ spec:
       containers:
         - name: pmdl-pharmacy-webapi-container
           env:
-            - name: AMBULANCE_API_MONGODB_HOST
+            - name: PHARMACY_API_MONGODB_HOST
               value: null
               valueFrom:
                 configMapKeyRef:
                   name: mongodb-connection
                   key: host
-            - name: AMBULANCE_API_MONGODB_PORT
+            - name: PHARMACY_API_MONGODB_PORT
               value: null
               valueFrom:
                 configMapKeyRef:
                   name: mongodb-connection
                   key: port
-            - name: AMBULANCE_API_MONGODB_USERNAME
+            - name: PHARMACY_API_MONGODB_USERNAME
               value: null
               valueFrom:
                 secretKeyRef:
                   name: mongodb-auth
                   key: username
-            - name: AMBULANCE_API_MONGODB_PASSWORD
+            - name: PHARMACY_API_MONGODB_PASSWORD
               value: null
               valueFrom:
                 secretKeyRef:

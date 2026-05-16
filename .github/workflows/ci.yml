@@ -31,11 +31,11 @@ jobs:
       uses: craicoverflow/openapi-generator-generate-action@v1.2.1
       with:
         generator: go-gin-server
-        input: api/ambulance-wl.openapi.yaml
-        additional-properties: apiPath=internal/ambulance_wl,packageName=ambulance_wl,interfaceOnly=true
+        input: api/pharmacy.openapi.yaml
+        additional-properties: apiPath=internal/pharmacy_orders,packageName=pharmacy_orders,interfaceOnly=true
         
     - name: Build
-      run: go build -v ./cmd/ambulance-api-service
+      run: go build -v ./cmd/pharmacy-api-service
       
     - name: Test
       run: go test -v ./...

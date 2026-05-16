@@ -1,11 +1,11 @@
-const mongoHost = process.env.AMBULANCE_API_MONGODB_HOST
-const mongoPort = process.env.AMBULANCE_API_MONGODB_PORT
+const mongoHost = process.env.PHARMACY_API_MONGODB_HOST
+const mongoPort = process.env.PHARMACY_API_MONGODB_PORT
 
-const mongoUser = process.env.AMBULANCE_API_MONGODB_USERNAME
-const mongoPassword = process.env.AMBULANCE_API_MONGODB_PASSWORD
+const mongoUser = process.env.PHARMACY_API_MONGODB_USERNAME
+const mongoPassword = process.env.PHARMACY_API_MONGODB_PASSWORD
 
-const database = process.env.AMBULANCE_API_MONGODB_DATABASE
-const collection = process.env.AMBULANCE_API_MONGODB_COLLECTION
+const database = process.env.PHARMACY_API_MONGODB_DATABASE
+const collection = process.env.PHARMACY_API_MONGODB_COLLECTION
 
 const retrySeconds = parseInt(process.env.RETRY_CONNECTION_SECONDS || "5") || 5;
 
@@ -24,33 +24,11 @@ while(true) {
 
 const db = connection.getDB(database)
 
-// initialize ambulance collection if not exists
-const databases = connection.getDBNames()
-if (!databases.includes(database) || !db.getCollectionNames().includes(collection)) {
+// initialize pharmacy collection if not exists
+if (!db.getCollectionNames().includes(collection)) {
     db.createCollection(collection)
     db[collection].createIndex({ "id": 1 })
-    db[collection].insertMany([
-        {
-            "id": "bobulova",
-            "name": "Dr.Bobulová",
-            "roomNumber": "123",
-            "predefinedConditions": [
-                { "value": "Nádcha", "code": "rhinitis" },
-                { "value": "Kontrola", "code": "checkup" }
-            ]
-        }
-    ]);
-    print(`Initialized collection '${collection}' in database '${database}'`)
-} else {
-    print(`Collection '${collection}' already exists in database '${database}'`)
-}
-
-// initialize pharmacy collection if not exists
-const pharmacyCollection = 'pharmacy'
-if (!db.getCollectionNames().includes(pharmacyCollection)) {
-    db.createCollection(pharmacyCollection)
-    db[pharmacyCollection].createIndex({ "id": 1 })
-    db[pharmacyCollection].insertOne({
+    db[collection].insertOne({
         "id": "pmdl-pharmacy",
         "medicines": [
             {
@@ -75,9 +53,9 @@ if (!db.getCollectionNames().includes(pharmacyCollection)) {
             }
         ]
     });
-    print(`Initialized collection '${pharmacyCollection}' in database '${database}'`)
+    print(`Initialized collection '${collection}' in database '${database}'`)
 } else {
-    print(`Collection '${pharmacyCollection}' already exists in database '${database}'`)
+    print(`Collection '${collection}' already exists in database '${database}'`)
 }
 
 process.exit(0);

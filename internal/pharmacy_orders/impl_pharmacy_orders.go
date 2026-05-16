@@ -1,4 +1,4 @@
-package ambulance_wl
+package pharmacy_orders
 
 import (
 	"github.com/gin-gonic/gin"
