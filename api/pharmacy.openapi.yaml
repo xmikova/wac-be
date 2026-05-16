@@ -16,6 +16,8 @@ tags:
   description: Pharmacy Orders API
 - name: pharmacyMedicines
   description: Pharmacy Medicines Inventory API
+- name: pharmacyDispensings
+  description: Pharmacy Medicine Dispensing API
 paths:
   "/pharmacy/{pharmacyId}/orders":
     get:
@@ -228,6 +230,73 @@ paths:
           description: Invalid status value
         "404":
           description: Pharmacy or Order with such ID does not exist
+  "/pharmacy/{pharmacyId}/dispensings":
+    get:
+      tags:
+        - pharmacyDispensings
+      summary: Provides the list of medicine dispensings
+      operationId: getDispensings
+      description: By using pharmacyId you get list of all medicine dispensing records
+      parameters:
+        - in: path
+          name: pharmacyId
+          description: pass the id of the particular pharmacy
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: list of medicine dispensings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Dispensing"
+              examples:
+                response:
+                  $ref: "#/components/examples/DispensingsListExample"
+        "404":
+          description: Pharmacy with such ID does not exist
+    post:
+      tags:
+        - pharmacyDispensings
+      summary: Records a new medicine dispensing
+      operationId: createDispensing
+      description: Use this method to record dispensing of a medicine to a department. Automatically decrements the medicine stock.
+      parameters:
+        - in: path
+          name: pharmacyId
+          description: pass the id of the particular pharmacy
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Dispensing"
+            examples:
+              request-sample:
+                $ref: "#/components/examples/DispensingExample"
+        description: Dispensing record to create
+        required: true
+      responses:
+        "200":
+          description: Dispensing successfully recorded and stock decremented
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dispensing"
+              examples:
+                response:
+                  $ref: "#/components/examples/DispensingExample"
+        "400":
+          description: Missing mandatory properties of input object.
+        "404":
+          description: Pharmacy or Medicine with such ID does not exist
+        "422":
+          description: Insufficient stock available for dispensing
   "/pharmacy/{pharmacyId}/medicines":
     get:
       tags:
@@ -398,6 +467,46 @@ paths:
           description: Pharmacy or Medicine with such ID does not exist
 components:
   schemas:
+    Dispensing:
+      type: object
+      required: [id, medicineId, quantity, department, dispensedBy, dispensedAt]
+      properties:
+        id:
+          type: string
+          example: "disp-001"
+          description: Unique identifier of the dispensing record
+        medicineId:
+          type: string
+          example: "med-001"
+          description: Identifier of the dispensed medicine
+        medicineName:
+          type: string
+          example: "Aspirin 500mg"
+          description: Name of the dispensed medicine (filled from inventory)
+        quantity:
+          type: integer
+          format: int32
+          example: 10
+          description: Quantity dispensed
+        department:
+          type: string
+          example: "Kardiológia"
+          description: Department or ward that received the medicine
+        dispensedBy:
+          type: string
+          example: "Jana Nováková"
+          description: Name or ID of the pharmacist who dispensed
+        dispensedAt:
+          type: string
+          format: date-time
+          example: "2024-05-15T09:30:00Z"
+          description: Timestamp when the dispensing occurred (set by server)
+        note:
+          type: string
+          example: "Pacient Ján Novák, izba 203"
+          description: Optional note about the dispensing
+      example:
+        $ref: "#/components/examples/DispensingExample"
     Medicine:
       type: object
       required: [id, name, activeSubstance, dosage, batchNumber, expiryDate, minStock, currentStock]
@@ -524,6 +633,37 @@ components:
       example:
         $ref: "#/components/examples/OrderExample"
   examples:
+    DispensingExample:
+      summary: Sample dispensing record
+      description: Example of a medicine dispensing to a hospital department
+      value:
+        id: "disp-001"
+        medicineId: "med-001"
+        medicineName: "Aspirin 500mg"
+        quantity: 10
+        department: "Kardiológia"
+        dispensedBy: "Jana Nováková"
+        dispensedAt: "2024-05-15T09:30:00Z"
+        note: "Pacient Ján Novák, izba 203"
+    DispensingsListExample:
+      summary: List of dispensing records
+      description: Example list of medicine dispensings
+      value:
+        - id: "disp-001"
+          medicineId: "med-001"
+          medicineName: "Aspirin 500mg"
+          quantity: 10
+          department: "Kardiológia"
+          dispensedBy: "Jana Nováková"
+          dispensedAt: "2024-05-15T09:30:00Z"
+          note: "Pacient Ján Novák, izba 203"
+        - id: "disp-002"
+          medicineId: "med-003"
+          medicineName: "Paracetamol 650mg"
+          quantity: 20
+          department: "Chirurgia"
+          dispensedBy: "Mária Kováčová"
+          dispensedAt: "2024-05-15T11:00:00Z"
     MedicineExample:
       summary: Sample medicine record
       description: Example of a medicine registered in the pharmacy inventory

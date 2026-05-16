@@ -47,8 +47,9 @@ func main() {
 	})
 
 	handleFunctions := &pharmacy_orders.ApiHandleFunctions{
-		PharmacyOrdersAPI:    pharmacy_orders.NewPharmacyOrdersApi(),
-		PharmacyMedicinesAPI: pharmacy_orders.NewPharmacyMedicinesApi(),
+		PharmacyOrdersAPI:      pharmacy_orders.NewPharmacyOrdersApi(),
+		PharmacyMedicinesAPI:   pharmacy_orders.NewPharmacyMedicinesApi(),
+		PharmacyDispensingsAPI: pharmacy_orders.NewPharmacyDispensingsApi(),
 	}
 	pharmacy_orders.NewRouterWithGinEngine(engine, *handleFunctions)
 

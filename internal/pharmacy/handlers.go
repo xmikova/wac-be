@@ -227,3 +227,52 @@ func DeleteOrder(ctx *gin.Context) {
 		return store, nil, http.StatusNoContent
 	})
 }
+
+// Dispensings handlers
+func GetDispensings(ctx *gin.Context) {
+	getPharmacyFunc(ctx, func(c *gin.Context, store *PharmacyStore) (*PharmacyStore, interface{}, int) {
+		dispensings := store.Dispensings
+		if dispensings == nil {
+			dispensings = []Dispensing{}
+		}
+		return nil, dispensings, http.StatusOK
+	})
+}
+
+func CreateDispensing(ctx *gin.Context) {
+	getPharmacyFunc(ctx, func(c *gin.Context, store *PharmacyStore) (*PharmacyStore, interface{}, int) {
+		var dispensing Dispensing
+		if err := c.ShouldBindJSON(&dispensing); err != nil {
+			return nil, gin.H{"message": "Invalid request body", "error": err.Error()}, http.StatusBadRequest
+		}
+		if dispensing.MedicineId == "" {
+			return nil, gin.H{"message": "medicineId is required"}, http.StatusBadRequest
+		}
+		if dispensing.Quantity <= 0 {
+			return nil, gin.H{"message": "quantity must be positive"}, http.StatusBadRequest
+		}
+
+		// find the medicine and check stock
+		medIdx := slices.IndexFunc(store.Medicines, func(m Medicine) bool { return m.Id == dispensing.MedicineId })
+		if medIdx < 0 {
+			return nil, gin.H{"message": "Medicine not found"}, http.StatusNotFound
+		}
+		med := store.Medicines[medIdx]
+		if med.CurrentStock < dispensing.Quantity {
+			return nil, gin.H{"message": "Insufficient stock", "available": med.CurrentStock}, http.StatusUnprocessableEntity
+		}
+
+		// fill in derived fields
+		dispensing.MedicineName = med.Name
+		if dispensing.Id == "" || dispensing.Id == "@new" {
+			dispensing.Id = uuid.NewString()
+		}
+		dispensing.DispensedAt = time.Now().UTC()
+
+		// decrement stock
+		store.Medicines[medIdx].CurrentStock -= dispensing.Quantity
+
+		store.Dispensings = append(store.Dispensings, dispensing)
+		return store, dispensing, http.StatusOK
+	})
+}

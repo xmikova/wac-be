@@ -14,9 +14,21 @@ type Medicine struct {
 }
 
 type PharmacyStore struct {
-	Id        string     `json:"id" bson:"id"`
-	Medicines []Medicine `json:"medicines" bson:"medicines"`
-	Orders    []Order    `json:"orders" bson:"orders"`
+	Id          string       `json:"id" bson:"id"`
+	Medicines   []Medicine   `json:"medicines" bson:"medicines"`
+	Orders      []Order      `json:"orders" bson:"orders"`
+	Dispensings []Dispensing `json:"dispensings" bson:"dispensings"`
+}
+
+type Dispensing struct {
+	Id           string    `json:"id" bson:"id"`
+	MedicineId   string    `json:"medicineId" bson:"medicineId"`
+	MedicineName string    `json:"medicineName" bson:"medicineName"`
+	Quantity     int       `json:"quantity" bson:"quantity"`
+	Department   string    `json:"department" bson:"department"`
+	DispensedBy  string    `json:"dispensedBy" bson:"dispensedBy"`
+	DispensedAt  time.Time `json:"dispensedAt" bson:"dispensedAt"`
+	Note         string    `json:"note,omitempty" bson:"note,omitempty"`
 }
 
 type OrderStatus string
