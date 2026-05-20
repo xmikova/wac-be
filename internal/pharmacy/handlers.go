@@ -277,6 +277,23 @@ func CreateDispensing(ctx *gin.Context) {
 	})
 }
 
+func GetOrderReceipt(ctx *gin.Context) {
+	getPharmacyFunc(ctx, func(c *gin.Context, store *PharmacyStore) (*PharmacyStore, interface{}, int) {
+		orderId := c.Param("orderId")
+
+		if store.StockReceipts == nil {
+			return nil, gin.H{"message": "Receipt not found"}, http.StatusNotFound
+		}
+
+		receiptIdx := slices.IndexFunc(store.StockReceipts, func(r StockReceipt) bool { return r.OrderId == orderId })
+		if receiptIdx < 0 {
+			return nil, gin.H{"message": "Receipt not found"}, http.StatusNotFound
+		}
+
+		return nil, store.StockReceipts[receiptIdx], http.StatusOK
+	})
+}
+
 func ReceiveOrder(ctx *gin.Context) {
 	getPharmacyFunc(ctx, func(c *gin.Context, store *PharmacyStore) (*PharmacyStore, interface{}, int) {
 		orderId := c.Param("orderId")

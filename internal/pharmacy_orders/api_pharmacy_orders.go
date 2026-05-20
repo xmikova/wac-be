@@ -40,6 +40,10 @@ type PharmacyOrdersAPI interface {
 	// Updates order status
 	UpdateOrderStatus(c *gin.Context)
 
+	// GetOrderReceipt Get /api/pharmacy/:pharmacyId/orders/:orderId/receipt
+	// Provides the stock receipt for a delivered order
+	GetOrderReceipt(c *gin.Context)
+
 	// ReceiveOrder Post /api/pharmacy/:pharmacyId/orders/:orderId/receive
 	// Receives a delivered order into stock
 	ReceiveOrder(c *gin.Context)

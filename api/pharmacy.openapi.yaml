@@ -465,6 +465,32 @@ paths:
           description: Medicine removed from inventory
         "404":
           description: Pharmacy or Medicine with such ID does not exist
+  "/pharmacy/{pharmacyId}/orders/{orderId}/receipt":
+    get:
+      tags:
+        - pharmacyOrders
+      summary: Gets the receipt for a delivered order
+      operationId: getOrderReceipt
+      parameters:
+        - in: path
+          name: pharmacyId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Receipt details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StockReceipt"
+        "404":
+          description: Receipt not found
   "/pharmacy/{pharmacyId}/orders/{orderId}/receive":
     post:
       tags:
@@ -659,6 +685,32 @@ components:
           description: Additional notes for the order
       example:
         $ref: "#/components/examples/OrderExample"
+    StockReceiptItem:
+      type: object
+      properties:
+        medicineId:
+          type: string
+        medicineName:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+    StockReceipt:
+      type: object
+      properties:
+        id:
+          type: string
+        pharmacyId:
+          type: string
+        orderId:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/StockReceiptItem"
+        receivedAt:
+          type: string
+          format: date-time
   examples:
     DispensingExample:
       summary: Sample dispensing record

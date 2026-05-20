@@ -129,6 +129,12 @@ func getRoutes(handleFunctions ApiHandleFunctions) []Route {
 			handleFunctions.PharmacyDispensingsAPI.CreateDispensing,
 		},
 		{
+			"GetOrderReceipt",
+			http.MethodGet,
+			"/api/pharmacy/:pharmacyId/orders/:orderId/receipt",
+			handleFunctions.PharmacyOrdersAPI.GetOrderReceipt,
+		},
+		{
 			"ReceiveOrder",
 			http.MethodPost,
 			"/api/pharmacy/:pharmacyId/orders/:orderId/receive",
