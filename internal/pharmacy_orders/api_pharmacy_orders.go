@@ -16,29 +16,31 @@ import (
 
 type PharmacyOrdersAPI interface {
 
+	// CreateOrder Post /api/pharmacy/:pharmacyId/orders
+	// Creates new medication order
+	CreateOrder(c *gin.Context)
 
-    // CreateOrder Post /api/pharmacy/:pharmacyId/orders
-    // Creates new medication order 
-     CreateOrder(c *gin.Context)
+	// DeleteOrder Delete /api/pharmacy/:pharmacyId/orders/:orderId
+	// Cancels specific medication order
+	DeleteOrder(c *gin.Context)
 
-    // DeleteOrder Delete /api/pharmacy/:pharmacyId/orders/:orderId
-    // Cancels specific medication order 
-     DeleteOrder(c *gin.Context)
+	// GetOrder Get /api/pharmacy/:pharmacyId/orders/:orderId
+	// Provides details about specific medication order
+	GetOrder(c *gin.Context)
 
-    // GetOrder Get /api/pharmacy/:pharmacyId/orders/:orderId
-    // Provides details about specific medication order 
-     GetOrder(c *gin.Context)
+	// GetOrders Get /api/pharmacy/:pharmacyId/orders
+	// Provides the list of medication orders
+	GetOrders(c *gin.Context)
 
-    // GetOrders Get /api/pharmacy/:pharmacyId/orders
-    // Provides the list of medication orders 
-     GetOrders(c *gin.Context)
+	// UpdateOrder Put /api/pharmacy/:pharmacyId/orders/:orderId
+	// Updates specific medication order
+	UpdateOrder(c *gin.Context)
 
-    // UpdateOrder Put /api/pharmacy/:pharmacyId/orders/:orderId
-    // Updates specific medication order 
-     UpdateOrder(c *gin.Context)
+	// UpdateOrderStatus Patch /api/pharmacy/:pharmacyId/orders/:orderId/status
+	// Updates order status
+	UpdateOrderStatus(c *gin.Context)
 
-    // UpdateOrderStatus Patch /api/pharmacy/:pharmacyId/orders/:orderId/status
-    // Updates order status 
-     UpdateOrderStatus(c *gin.Context)
-
+	// ReceiveOrder Post /api/pharmacy/:pharmacyId/orders/:orderId/receive
+	// Receives a delivered order into stock
+	ReceiveOrder(c *gin.Context)
 }

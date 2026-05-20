@@ -14,10 +14,11 @@ type Medicine struct {
 }
 
 type PharmacyStore struct {
-	Id          string       `json:"id" bson:"id"`
-	Medicines   []Medicine   `json:"medicines" bson:"medicines"`
-	Orders      []Order      `json:"orders" bson:"orders"`
-	Dispensings []Dispensing `json:"dispensings" bson:"dispensings"`
+	Id            string         `json:"id" bson:"id"`
+	Medicines     []Medicine     `json:"medicines" bson:"medicines"`
+	Orders        []Order        `json:"orders" bson:"orders"`
+	Dispensings   []Dispensing   `json:"dispensings" bson:"dispensings"`
+	StockReceipts []StockReceipt `json:"stockReceipts" bson:"stockReceipts"`
 }
 
 type Dispensing struct {
@@ -29,6 +30,20 @@ type Dispensing struct {
 	DispensedBy  string    `json:"dispensedBy" bson:"dispensedBy"`
 	DispensedAt  time.Time `json:"dispensedAt" bson:"dispensedAt"`
 	Note         string    `json:"note,omitempty" bson:"note,omitempty"`
+}
+
+type StockReceiptItem struct {
+	MedicineId   string `json:"medicineId" bson:"medicineId"`
+	MedicineName string `json:"medicineName" bson:"medicineName"`
+	Quantity     int    `json:"quantity" bson:"quantity"`
+}
+
+type StockReceipt struct {
+	Id         string             `json:"id" bson:"id"`
+	PharmacyId string             `json:"pharmacyId" bson:"pharmacyId"`
+	OrderId    string             `json:"orderId" bson:"orderId"`
+	Items      []StockReceiptItem `json:"items" bson:"items"`
+	ReceivedAt time.Time          `json:"receivedAt" bson:"receivedAt"`
 }
 
 type OrderStatus string

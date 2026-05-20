@@ -465,6 +465,33 @@ paths:
           description: Medicine removed from inventory
         "404":
           description: Pharmacy or Medicine with such ID does not exist
+  "/pharmacy/{pharmacyId}/orders/{orderId}/receive":
+    post:
+      tags:
+        - pharmacyOrders
+      summary: Receives a delivered order into stock
+      operationId: receiveOrder
+      description: Call this after the order status was changed to delivered. It increments medicine stock according to the order items.
+      parameters:
+        - in: path
+          name: pharmacyId
+          description: pass the id of the particular pharmacy
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: orderId
+          description: pass the id of the particular order
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Order quantities were applied to stock
+        "404":
+          description: Pharmacy or Order with such ID does not exist
+        "409":
+          description: Order is not delivered or stock was already applied
 components:
   schemas:
     Dispensing:

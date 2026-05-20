@@ -35,3 +35,7 @@ func (o implPharmacyOrdersAPI) UpdateOrder(c *gin.Context) {
 func (o implPharmacyOrdersAPI) UpdateOrderStatus(c *gin.Context) {
 	pharmacy.UpdateOrderStatus(c)
 }
+
+func (o implPharmacyOrdersAPI) ReceiveOrder(c *gin.Context) {
+	pharmacy.ReceiveOrder(c)
+}

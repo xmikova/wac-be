@@ -276,3 +276,73 @@ func CreateDispensing(ctx *gin.Context) {
 		return store, dispensing, http.StatusOK
 	})
 }
+
+func ReceiveOrder(ctx *gin.Context) {
+	getPharmacyFunc(ctx, func(c *gin.Context, store *PharmacyStore) (*PharmacyStore, interface{}, int) {
+		orderId := c.Param("orderId")
+
+		orderIdx := slices.IndexFunc(store.Orders, func(o Order) bool { return o.Id == orderId })
+		if orderIdx < 0 {
+			return nil, gin.H{"message": "Order not found"}, http.StatusNotFound
+		}
+
+		order := store.Orders[orderIdx]
+		if order.Status != OrderStatusDelivered {
+			return nil, gin.H{"message": "Only delivered orders can be received into stock"}, http.StatusConflict
+		}
+
+		if len(order.Items) == 0 {
+			return nil, gin.H{"message": "Order has no items"}, http.StatusBadRequest
+		}
+
+		if store.StockReceipts != nil {
+			if receiptIdx := slices.IndexFunc(store.StockReceipts, func(r StockReceipt) bool { return r.OrderId == orderId }); receiptIdx >= 0 {
+				return nil, nil, http.StatusNoContent
+			}
+		}
+
+		receipt := StockReceipt{
+			Id:         uuid.NewString(),
+			PharmacyId: store.Id,
+			OrderId:    orderId,
+			ReceivedAt: time.Now().UTC(),
+			Items:      make([]StockReceiptItem, 0, len(order.Items)),
+		}
+
+		medicineIndexes := make([]int, len(order.Items))
+		for i, item := range order.Items {
+			if item.Quantity <= 0 {
+				return nil, gin.H{"message": "Order item quantity must be positive", "medicineId": item.MedicineId}, http.StatusBadRequest
+			}
+
+			medIdx := slices.IndexFunc(store.Medicines, func(m Medicine) bool { return m.Id == item.MedicineId })
+			if medIdx < 0 {
+				newMedId := item.MedicineId
+				if newMedId == "" {
+					newMedId = uuid.NewString()
+				}
+				newMed := Medicine{
+					Id:           newMedId,
+					Name:         item.MedicineName,
+					CurrentStock: 0,
+				}
+				store.Medicines = append(store.Medicines, newMed)
+				medIdx = len(store.Medicines) - 1
+			}
+
+			medicineIndexes[i] = medIdx
+			receipt.Items = append(receipt.Items, StockReceiptItem{
+				MedicineId:   store.Medicines[medIdx].Id,
+				MedicineName: item.MedicineName,
+				Quantity:     item.Quantity,
+			})
+		}
+
+		for i, item := range order.Items {
+			store.Medicines[medicineIndexes[i]].CurrentStock += item.Quantity
+		}
+
+		store.StockReceipts = append(store.StockReceipts, receipt)
+		return store, nil, http.StatusNoContent
+	})
+}
